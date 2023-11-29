@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "821916941556",
+    "project_id": "encuesta-5cbfa",
+    "storage_bucket": "encuesta-5cbfa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:821916941556:android:d31eefa06a913ebee7f2a1",
+        "android_client_info": {
+          "package_name": "com.easd.code.encuesta"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkqIhszyQF3NncoLD07trry94Cp-jc2ZQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
