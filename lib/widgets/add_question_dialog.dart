@@ -1,4 +1,4 @@
-import 'package:encuesta/models/survey.dart';
+import 'package:encuesta/models/field.dart';
 import 'package:flutter/material.dart';
 
 class AddQuestionDialog extends StatefulWidget {
@@ -31,15 +31,6 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
         content: Column(
           children: [
             TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Nombre del campo',
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            TextFormField(
               controller: _titleController,
               decoration: const InputDecoration(
                 labelText: 'Titulo del campo',
@@ -48,21 +39,11 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
             const SizedBox(
               height: 20,
             ),
-            Row(
-              children: [
-                const Text('¿Es requerido?'),
-                const SizedBox(
-                  width: 10,
-                ),
-                Checkbox(
-                  value: _isRequired,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _isRequired = value ?? false;
-                    });
-                  },
-                ),
-              ],
+            TextFormField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                labelText: 'Nombre del campo',
+              ),
             ),
             const SizedBox(
               height: 20,
@@ -86,6 +67,25 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
                   onChanged: (String? value) {
                     setState(() {
                       type = value;
+                    });
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                const Text('¿Es requerido?'),
+                const SizedBox(
+                  width: 10,
+                ),
+                Checkbox(
+                  value: _isRequired,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _isRequired = value ?? false;
                     });
                   },
                 ),

@@ -32,7 +32,7 @@ class _DialogDeletSurveyState extends State<DialogDeletSurvey> {
           onPressed: () {
             FirebaseServices().deleteSurvey(widget.survey);
             setState(() {
-              Navigator.pushNamed(context, '/home');
+              Navigator.pushReplacementNamed(context, '/home');
             });
           },
           child: const Text('Eliminar'),

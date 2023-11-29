@@ -1,7 +1,9 @@
+import 'package:encuesta/models/field.dart';
 import 'package:encuesta/models/survey.dart';
 import 'package:encuesta/services/firebase_services.dart';
 import 'package:encuesta/widgets/add_question_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 class AddSurveyScreen extends StatefulWidget {
   const AddSurveyScreen({Key? key}) : super(key: key);
@@ -11,6 +13,7 @@ class AddSurveyScreen extends StatefulWidget {
 }
 
 class _AddSurveyScreenState extends State<AddSurveyScreen> {
+  String? uniqueId;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final List<Field> _fields = [];
@@ -52,6 +55,9 @@ class _AddSurveyScreenState extends State<AddSurveyScreen> {
                     fontSize: 18,
                   ),
                 ),
+                const SizedBox(
+                  height: 20,
+                ),
                 _fields.isNotEmpty
                     ? Column(
                         children: _fields.map((field) {
@@ -85,7 +91,10 @@ class _AddSurveyScreenState extends State<AddSurveyScreen> {
                 ),
                 ElevatedButton(
                     onPressed: _createSurvey,
-                    child: const Text('Crear encuesta'))
+                    child: const Text('Crear encuesta')),
+                const SizedBox(
+                  height: 20,
+                ),
               ],
             ),
           ),
@@ -110,10 +119,13 @@ class _AddSurveyScreenState extends State<AddSurveyScreen> {
     String description = _descriptionController.text.trim();
 
     if (name.isNotEmpty && description.isNotEmpty && _fields.isNotEmpty) {
+      String link = _generateSurveyLink();
       Survey survey = Survey(
         name: name,
         description: description,
         fields: _fields,
+        link: link,
+        code: uniqueId,
       );
 
       await FirebaseServices().createSurvey(survey);
@@ -123,7 +135,7 @@ class _AddSurveyScreenState extends State<AddSurveyScreen> {
           content: Text('Encuesta creada exitosamente'),
         ),
       );
-      Navigator.pushNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -132,5 +144,10 @@ class _AddSurveyScreenState extends State<AddSurveyScreen> {
         ),
       );
     }
+  }
+
+  String _generateSurveyLink() {
+    uniqueId = Uuid().v4();
+    return 'myapp://survey/$uniqueId';
   }
 }

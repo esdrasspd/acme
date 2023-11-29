@@ -1,3 +1,4 @@
+import 'package:encuesta/models/field.dart';
 import 'package:encuesta/models/survey.dart';
 import 'package:encuesta/services/firebase_services.dart';
 import 'package:encuesta/widgets/dialog_field_edit_survey.dart';
@@ -117,13 +118,11 @@ class _EditSurveyScreenState extends State<EditSurveyScreen> {
         builder: (BuildContext context) {
           return DialogFieldEditSurvey(field: originalField);
         }))!;
-    if (editedField != null) {
-      setState(() {
-        widget.survey.fields.remove(originalField);
-        widget.survey.fields.add(editedField);
-        print(widget.survey.fields.toString());
-      });
-    }
+    setState(() {
+      widget.survey.fields.remove(originalField);
+      widget.survey.fields.add(editedField);
+      print(widget.survey.fields.toString());
+    });
   }
 
   Future<void> _saveChanges() async {
@@ -144,6 +143,6 @@ class _EditSurveyScreenState extends State<EditSurveyScreen> {
       ),
     );
 
-    Navigator.pushNamed(context, '/home');
+    Navigator.pushReplacementNamed(context, '/home');
   }
 }

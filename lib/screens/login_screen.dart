@@ -1,3 +1,5 @@
+import 'package:encuesta/models/survey.dart';
+import 'package:encuesta/screens/fill_survey_screen.dart';
 import 'package:encuesta/screens/home_screen.dart';
 import 'package:encuesta/screens/register_screen.dart';
 import 'package:encuesta/services/firebase_services.dart';
@@ -13,12 +15,21 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final FirebaseServices _auth = FirebaseServices();
+  List<Survey>? surveys;
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _codeController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _getSurveys();
+  }
 
   @override
   void dispose() {
+    _codeController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -35,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text(
-            'Iniciar sesión',
+            'Iniciar sesión en Acme',
             style: TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.bold,
@@ -73,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
             height: 20,
           ),
           const SizedBox(
-            height: 20,
+            height: 5,
           ),
           TextButton(
             onPressed: () {
@@ -81,6 +92,23 @@ class _LoginScreenState extends State<LoginScreen> {
                   MaterialPageRoute(builder: (context) => RegisterScreen()));
             },
             child: const Text('¿No tienes cuenta? Regístrate'),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          TextFormField(
+            controller: _codeController,
+            decoration:
+                const InputDecoration(labelText: 'Código de la encuesta '),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              _validationCode(surveys!);
+            },
+            child: const Text('Ingresar a la encuesta'),
           ),
         ],
       ),
@@ -99,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
             content: Text('Bienvenido ${user.email}'),
           ),
         );
-        Navigator.push(
+        Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HomeScreen()));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -115,5 +143,44 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
     }
+  }
+
+  void _validationCode(List<Survey> surveys) {
+    String code = _codeController.text.trim();
+    Survey? matchingSurvey;
+    print(code);
+    print(surveys.length);
+    // Buscar la encuesta con el código correspondiente
+    if (surveys.isNotEmpty) {
+      try {
+        matchingSurvey = surveys.firstWhere((survey) => survey.code == code);
+      } catch (e) {
+        matchingSurvey = null;
+      }
+    }
+
+    print(matchingSurvey);
+
+    if (matchingSurvey != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FillSurveyScreen(survey: matchingSurvey!),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Código de encuesta no existe'),
+        ),
+      );
+    }
+  }
+
+  Future<void> _getSurveys() async {
+    List<Survey> fetchedSurveys = await _auth.getSurveys();
+    setState(() {
+      surveys = fetchedSurveys;
+    });
   }
 }

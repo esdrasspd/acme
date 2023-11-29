@@ -116,7 +116,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             content: Text('Usuario registrado correctamente'),
           ),
         );
-        Navigator.push(
+        Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HomeScreen()));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

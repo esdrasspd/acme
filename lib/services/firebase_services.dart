@@ -1,3 +1,5 @@
+import 'package:encuesta/models/field.dart';
+import 'package:encuesta/models/response.dart';
 import 'package:encuesta/models/survey.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -42,6 +44,8 @@ class FirebaseServices {
         id: doc.id,
         name: data['name'],
         description: data['description'],
+        link: data['link'],
+        code: data['code'],
         fields: (data['fields'] as List).map((field) {
           return Field(
             name: field['name'],
@@ -59,6 +63,8 @@ class FirebaseServices {
       await db.collection('survey').add({
         'name': survey.name,
         'description': survey.description,
+        'link': survey.link,
+        'code': survey.code,
         'fields': survey.fields.map((field) {
           return {
             'name': field.name,
@@ -100,6 +106,22 @@ class FirebaseServices {
     try {
       print(survey.id);
       await db.collection('survey').doc(survey.id).delete();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> saveResponses(Response response) async {
+    try {
+      await db.collection('responses').add({
+        'surveyCode': response.surveyCode,
+        'answers': response.answers.map((answer) {
+          return {
+            'fieldName': answer.fieldName,
+            'value': answer.value,
+          };
+        }).toList(),
+      });
     } catch (e) {
       print(e);
     }

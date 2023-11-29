@@ -39,7 +39,9 @@ dependencies:
   firebase_auth:
   cloud_firestore:
   firebase_storage:
-  url_launcher:
+  collection:
+  uuid:
+  flutter_datetime_picker:
 
 dev_dependencies:
   flutter_test:

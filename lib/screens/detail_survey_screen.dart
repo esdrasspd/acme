@@ -1,5 +1,6 @@
 import 'package:encuesta/models/survey.dart';
 import 'package:encuesta/screens/edit_survey_screen.dart';
+import 'package:encuesta/screens/fill_survey_screen.dart';
 import 'package:flutter/material.dart';
 
 class DetailSurveyScreen extends StatelessWidget {
@@ -18,6 +19,7 @@ class DetailSurveyScreen extends StatelessWidget {
             horizontal: 20,
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ListTile(
                 title: Text(
@@ -26,18 +28,21 @@ class DetailSurveyScreen extends StatelessWidget {
                       fontWeight: FontWeight.bold, fontSize: 20),
                 ),
                 subtitle: Text(
-                  survey.description,
+                  '\n${survey.description}\n\nCodigo encuesta: ${survey.code}',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ),
               const SizedBox(
                 height: 20,
               ),
-              const Text(
-                'Campos de la encuesta: ',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+              const Padding(
+                padding: EdgeInsets.only(left: 15, right: 10, bottom: 0),
+                child: Text(
+                  'Campos de la encuesta: ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
               ),
               const SizedBox(
@@ -67,6 +72,26 @@ class DetailSurveyScreen extends StatelessWidget {
                       }).toList(),
                     )
                   : const Text('La encuesta no contiene campos'),
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 20, top: 8, right: 20, bottom: 0),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                FillSurveyScreen(survey: survey)));
+                  },
+                  child: Text(
+                    'Link de la encuesta: \n${survey.link}',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
             ],
           ),
         ),

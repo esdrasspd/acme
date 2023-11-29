@@ -1,4 +1,4 @@
-import 'package:encuesta/models/survey.dart';
+import 'package:encuesta/models/field.dart';
 import 'package:flutter/material.dart';
 
 class DialogFieldEditSurvey extends StatefulWidget {

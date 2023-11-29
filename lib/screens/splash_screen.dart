@@ -27,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-          child: Text('Welcome to Flutter', style: TextStyle(fontSize: 24))),
+          child: Text('Bienvenido a Acma', style: TextStyle(fontSize: 24))),
     );
   }
 }

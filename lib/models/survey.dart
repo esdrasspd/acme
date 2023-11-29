@@ -1,32 +1,19 @@
+import 'package:encuesta/models/field.dart';
+
 class Survey {
   final String? id;
   final String name;
   final String description;
   final List<Field> fields;
-
-  String generateLink() {
-    String appBaseLink = 'myapp://survey/';
-    return appBaseLink + id!;
-  }
+  final String? link;
+  final String? code;
 
   Survey({
     this.id,
     required this.name,
     required this.description,
     required this.fields,
-  });
-}
-
-class Field {
-  final String name;
-  final String title;
-  final bool isRequired;
-  final String type;
-
-  Field({
-    required this.name,
-    required this.title,
-    required this.isRequired,
-    required this.type,
+    this.link,
+    this.code,
   });
 }
