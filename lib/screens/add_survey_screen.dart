@@ -1,5 +1,6 @@
 import 'package:encuesta/models/survey.dart';
 import 'package:encuesta/services/firebase_services.dart';
+import 'package:encuesta/widgets/add_question_dialog.dart';
 import 'package:flutter/material.dart';
 
 class AddSurveyScreen extends StatefulWidget {
@@ -10,7 +11,6 @@ class AddSurveyScreen extends StatefulWidget {
 }
 
 class _AddSurveyScreenState extends State<AddSurveyScreen> {
-  bool _isRequired = false;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final List<Field> _fields = [];
@@ -78,7 +78,6 @@ class _AddSurveyScreenState extends State<AddSurveyScreen> {
                 ElevatedButton(
                     onPressed: () {
                       _openAddFieldDialog(context);
-                      print(_fields.map((e) => e.title));
                     },
                     child: const Text('Agregar campo')),
                 const SizedBox(
@@ -94,95 +93,10 @@ class _AddSurveyScreenState extends State<AddSurveyScreen> {
   }
 
   void _openAddFieldDialog(BuildContext context) async {
-    TextEditingController _nameController = TextEditingController();
-    TextEditingController _titleController = TextEditingController();
-    String type;
     Field? newField = await showDialog<Field>(
         context: context,
         builder: (BuildContext context) {
-          return SingleChildScrollView(
-            child: AlertDialog(
-              title: const Text('Agregar campo'),
-              content: Column(
-                children: [
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nombre del campo',
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextFormField(
-                    controller: _titleController,
-                    decoration: const InputDecoration(
-                      labelText: 'Título del campo',
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      const Text('¿Es requerido?'),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Checkbox(
-                        value: _isRequired,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _isRequired = value ?? false;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      const Text('Tipo de campo'),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      DropdownButton<String>(
-                        value: 'Texto',
-                        items: ['Texto', 'Numero', 'Fecha']
-                            .map<DropdownMenuItem<String>>(
-                              (String value) => DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (String? value) {},
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancelar'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Field? newFields = Field(
-                        name: _nameController.text.trim(),
-                        title: _titleController.text.trim(),
-                        isRequired: _isRequired,
-                        type: type = 'Texto');
-                    Navigator.of(context).pop(newFields);
-                  },
-                  child: const Text('Agregar'),
-                ),
-              ],
-            ),
-          );
+          return const AddQuestionDialog();
         });
     if (newField != null) {
       setState(() {
@@ -209,9 +123,7 @@ class _AddSurveyScreenState extends State<AddSurveyScreen> {
           content: Text('Encuesta creada exitosamente'),
         ),
       );
-
-      Navigator.pop(
-          context); // Puedes redirigir a la pantalla de inicio o hacer otras acciones después de crear la encuesta
+      Navigator.pushNamed(context, '/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

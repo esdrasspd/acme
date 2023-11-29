@@ -1,5 +1,6 @@
 import 'package:encuesta/models/survey.dart';
 import 'package:encuesta/screens/detail_survey_screen.dart';
+import 'package:encuesta/widgets/dialog_delet_survey.dart';
 import 'package:flutter/material.dart';
 import 'package:encuesta/services/firebase_services.dart';
 
@@ -10,10 +11,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Encuestas'),
+        automaticallyImplyLeading: false,
       ),
       body: FutureBuilder(
         future: FirebaseServices().getSurveys(),
@@ -41,6 +48,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       ListTile(
                         title: Text(survey.name),
                         subtitle: Text(survey.description),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {
+                            _showDeleteConfirmationDialog(survey);
+                          },
+                        ),
                         onTap: () {
                           Navigator.push(
                               context,
@@ -68,5 +81,13 @@ class _HomeScreenState extends State<HomeScreen> {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  void _showDeleteConfirmationDialog(Survey survey) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return DialogDeletSurvey(survey: survey);
+        });
   }
 }

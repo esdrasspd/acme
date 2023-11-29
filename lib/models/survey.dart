@@ -4,6 +4,11 @@ class Survey {
   final String description;
   final List<Field> fields;
 
+  String generateLink() {
+    String appBaseLink = 'myapp://survey/';
+    return appBaseLink + id!;
+  }
+
   Survey({
     this.id,
     required this.name,

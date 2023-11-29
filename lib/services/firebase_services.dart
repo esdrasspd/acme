@@ -34,21 +34,6 @@ class FirebaseServices {
     await _auth.signOut();
   }
 
-/*
-  Future<List> getSurveys() async {
-    List surveys = [];
-    try {
-      CollectionReference collectionReferenceSurvey = db.collection('survey');
-      QuerySnapshot querySurvey = await collectionReferenceSurvey.get();
-      querySurvey.docs.forEach((element) {
-        surveys.add(element.data());
-      });
-    } catch (e) {
-      print(e);
-    }
-    return surveys;
-  }
-  */
   Future<List<Survey>> getSurveys() async {
     QuerySnapshot querySnapshot = await db.collection('survey').get();
     return querySnapshot.docs.map((doc) {
@@ -83,6 +68,38 @@ class FirebaseServices {
           };
         }).toList(),
       });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> updateSurvey(Survey survey) async {
+    try {
+      print(survey.id);
+      print(survey.name);
+      print(survey.description);
+      print(survey.fields);
+      await db.collection('survey').doc(survey.id).update({
+        'name': survey.name,
+        'description': survey.description,
+        'fields': survey.fields.map((field) {
+          return {
+            'name': field.name,
+            'title': field.title,
+            'isRequired': field.isRequired,
+            'type': field.type,
+          };
+        }).toList(),
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> deleteSurvey(Survey survey) async {
+    try {
+      print(survey.id);
+      await db.collection('survey').doc(survey.id).delete();
     } catch (e) {
       print(e);
     }

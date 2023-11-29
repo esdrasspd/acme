@@ -1,4 +1,6 @@
 import 'package:encuesta/models/survey.dart';
+import 'package:encuesta/services/firebase_services.dart';
+import 'package:encuesta/widgets/dialog_field_edit_survey.dart';
 import 'package:flutter/material.dart';
 
 class EditSurveyScreen extends StatefulWidget {
@@ -19,6 +21,13 @@ class _EditSurveyScreenState extends State<EditSurveyScreen> {
     _descriptionController =
         TextEditingController(text: widget.survey.description);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _nameController.dispose();
+    _descriptionController.dispose();
   }
 
   @override
@@ -77,7 +86,9 @@ class _EditSurveyScreenState extends State<EditSurveyScreen> {
                                     Text('¿Es requerido?: ${field.isRequired}'),
                                   ],
                                 ),
-                                onTap: () {},
+                                onTap: () {
+                                  _showFieldEditDialog(field);
+                                },
                               ),
                               const Divider(),
                             ],
@@ -89,8 +100,10 @@ class _EditSurveyScreenState extends State<EditSurveyScreen> {
                   height: 20,
                 ),
                 ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Guardar'),
+                  onPressed: () {
+                    _saveChanges();
+                  },
+                  child: const Text('Actualizar'),
                 ),
               ],
             ),
@@ -98,82 +111,39 @@ class _EditSurveyScreenState extends State<EditSurveyScreen> {
         ));
   }
 
-  void _showFieldEditDialog(Field field) {
-    TextEditingController _titleController =
-        TextEditingController(text: field.title);
-    TextEditingController _nameController =
-        TextEditingController(text: field.name);
-    TextEditingController _typeController =
-        TextEditingController(text: field.type);
-    TextEditingController _isRequiredController =
-        TextEditingController(text: field.isRequired.toString());
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Editar campo'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Título del campo',
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nombre del campo',
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              TextFormField(
-                controller: _typeController,
-                decoration: const InputDecoration(
-                  labelText: 'Tipo del campo',
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              TextFormField(
-                controller: _isRequiredController,
-                decoration: const InputDecoration(
-                  labelText: '¿Es requerido?',
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(
-                    context,
-                    Field(
-                      title: _titleController.text,
-                      name: _nameController.text,
-                      type: _typeController.text,
-                      isRequired:
-                          _isRequiredController.text == 'true' ? true : false,
-                    ));
-              },
-              child: const Text('Guardar'),
-            ),
-          ],
-        );
-      },
+  void _showFieldEditDialog(Field originalField) async {
+    Field? editedField = (await showDialog<Field>(
+        context: context,
+        builder: (BuildContext context) {
+          return DialogFieldEditSurvey(field: originalField);
+        }))!;
+    if (editedField != null) {
+      setState(() {
+        widget.survey.fields.remove(originalField);
+        widget.survey.fields.add(editedField);
+        print(widget.survey.fields.toString());
+      });
+    }
+  }
+
+  Future<void> _saveChanges() async {
+    String name = _nameController.text.trim();
+    String description = _descriptionController.text.trim();
+    Survey survey = Survey(
+      id: widget.survey.id,
+      name: name,
+      description: description,
+      fields: widget.survey.fields,
     );
+
+    await FirebaseServices().updateSurvey(survey);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Encuesta actualizada con éxito.'),
+      ),
+    );
+
+    Navigator.pushNamed(context, '/home');
   }
 }
